@@ -12,7 +12,6 @@ public class UserGlobalExceptionHandler {
     public ResponseEntity<UserIncorrectData> handlerException(NoSuchUserException exception) {
         UserIncorrectData data = new UserIncorrectData();
         data.setInfo(exception.getMessage());
-
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 
@@ -20,7 +19,6 @@ public class UserGlobalExceptionHandler {
     public ResponseEntity<UserIncorrectData> handlerException(Exception exception) {
         UserIncorrectData data = new UserIncorrectData();
         data.setInfo(exception.getMessage());
-
         return new ResponseEntity<>(data, HttpStatus.BAD_REQUEST);
     }
 }

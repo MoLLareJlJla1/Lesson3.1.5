@@ -37,22 +37,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .permitAll();
     }
-//@Override
-//protected void configure(HttpSecurity http) throws Exception {
-//    http
-//            .csrf().disable()
-//            .authorizeRequests()
-//            .anyRequest()
-//            .permitAll()
-//            .and()
-//            .formLogin()
-//            .successHandler(successUserHandler)
-//            .permitAll()
-//            .and()
-//            .logout()
-//            .permitAll();
-//}
-
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
