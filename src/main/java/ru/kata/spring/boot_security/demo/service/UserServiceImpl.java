@@ -1,24 +1,32 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
-import ru.kata.spring.boot_security.demo.repository.UserRepo;
+
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl implements UserService {
-    private final UserRepo userRepo;
+    private final UserDao userRepo;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepo.findByEmail(username);
+        User user = userRepo.findByEmail(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User with email " + username + " not found");
+        }
+        return user;
     }
 
     @Override
@@ -40,13 +48,13 @@ public class UserServiceImpl implements UserService {
     public void saveMethod(User user) {
         if (userRepo.findByEmail(user.getEmail()) == null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepo.saveAndFlush(user);
+            userRepo.save(user);
         }
     }
 
     @Override
     public User userById(Long id) {
-        return userRepo.findById(id).orElseThrow();
+        return userRepo.findById(id);
     }
 
     @Override

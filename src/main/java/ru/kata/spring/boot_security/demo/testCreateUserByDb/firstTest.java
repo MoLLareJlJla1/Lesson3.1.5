@@ -1,6 +1,6 @@
 package ru.kata.spring.boot_security.demo.testCreateUserByDb;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
@@ -12,7 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class firstTest {
     private final UserService userService;
     private final RoleService roleService;
@@ -39,3 +39,22 @@ public class firstTest {
 
     }
 }
+//    private final RoleService roleService;
+//    private final UserService userService;
+//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+//
+//    @PostConstruct
+//    public void run() {
+//        Role roleUser = new Role();
+//        roleUser.setName("ROLE_USER");
+//        Role roleAdmin = new Role();
+//        roleAdmin.setName("ROLE_ADMIN");
+//
+//        roleService.saveRole(roleUser);
+//        roleService.saveRole(roleAdmin);
+//        User admin = new User("Sergei", "Safronov", 30, "admin", "123", Set.of(roleAdmin, roleUser));
+//        User user = new User("Igor", "Brizgunov", 31, "user", "123", Set.of(roleUser));
+//        userService.saveUser(admin);
+//        userService.saveUser(user);
+//
+//    }
