@@ -1,24 +1,39 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.util.UserNotFoundException;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+
 @Repository
-public class UserDaoImpl implements UserDao{
+@Transactional
+public class UserDaoImpl implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public void save(User user) {
-        entityManager.merge(user);
+    public User findByEmail(String email) {
+        try {
+            return entityManager.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult();
+
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
-    public User findById(long id) {
-        return entityManager.find(User.class,id);
+    public User findById(Long id) {
+        return entityManager.createQuery("SELECT u FROM User u WHERE u.id = :id", User.class)
+                .setParameter("id", id)
+                .getResultList().stream().findAny().orElseThrow(UserNotFoundException::new);
+
     }
 
     @Override
@@ -27,15 +42,17 @@ public class UserDaoImpl implements UserDao{
     }
 
     @Override
-    public void deleteById(long id) {
-        entityManager.createQuery(
-                "DELETE User WHERE id = :id").setParameter("id", id).executeUpdate();
+    public void delete(User user) {
+        entityManager.remove(user);
     }
 
     @Override
-    public User findByEmail(String user) {
-       return entityManager.createQuery("select u FROM User u WHERe u.email = :name", User.class)
-                .setParameter("name",user)
-                .getResultList().stream().findAny().orElse(null);
+    public void save(User user) {
+        entityManager.persist(user);
+    }
+
+    @Override
+    public void update(User user) {
+        entityManager.merge(user);
     }
 }

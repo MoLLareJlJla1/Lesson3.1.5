@@ -2,63 +2,68 @@ package ru.kata.spring.boot_security.demo.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
+import ru.kata.spring.boot_security.demo.util.BadJsonException;
+import ru.kata.spring.boot_security.demo.util.UserFoundException;
 import ru.kata.spring.boot_security.demo.model.User;
 
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserServiceImpl implements UserService {
-    private final UserDao userRepo;
+    private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByEmail(username);
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDao.findByEmail(username);
         if (user == null) {
-            throw new UsernameNotFoundException("User with email " + username + " not found");
+            throw new UserFoundException();
         }
         return user;
     }
 
     @Override
     public List<User> getAllUser() {
-        return userRepo.findAll();
+        return userDao.findAll();
     }
-
-    public void update(User user) {
-        System.out.println(user.getPassword());
-        if(!user.getPassword().startsWith("$2a$")){
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        }
-        System.out.println(user.getPassword());
-        userRepo.save(user);
-    }
-
 
     @Override
-    public void saveMethod(User user) {
-        if (userRepo.findByEmail(user.getEmail()) == null) {
+    public void save(User user) {
+        if ((user.getId() == null) && userDao.findByEmail(user.getEmail()) == null) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            userRepo.save(user);
+            userDao.save(user);
+        } else {
+            throw new UserFoundException();
         }
     }
 
     @Override
-    public User userById(Long id) {
-        return userRepo.findById(id);
+    public void update(Long id, User user) {
+        if (user.getId() == id || user.getId() == null) {
+            User us = userDao.findById(id);
+            us.setId(id);
+            us.setName(user.getName());
+            us.setLastName(user.getLastName());
+            us.setAge(user.getAge());
+            us.setPassword(user.getPassword());
+            us.setEmail(user.getEmail());
+            us.setRoles(user.getRoles());
+            userDao.update(us);
+        } else {
+            throw new BadJsonException();
+        }
     }
 
     @Override
-    public void deleteUserById(Long id) {
-        userRepo.deleteById(id);
+    public void delete(Long id) {
+        User user = userDao.findById(id);
+        userDao.delete(user);
     }
 }

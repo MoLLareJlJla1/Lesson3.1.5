@@ -6,8 +6,6 @@ let editAge = document.getElementById("editAge");
 let editPassw = document.getElementById("editParol");
 let editEmail = document.getElementById("editEmail");
 
-
-//ВЫВОД ВСЕХ НА ЭКРАН
 const all = $.ajax(url, {
     success: function (data) {
         let temp = '';
@@ -40,13 +38,11 @@ const all = $.ajax(url, {
 
     }
 })
-//ДОБАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
-$(document).ready(function () {
-    // Обработчик нажатия на кнопку "Добавить"
-    $('#addButton').click(function (e) {
-        e.preventDefault(); // Предотвращаем перезагрузку страницы
 
-        // Получаем значения из полей ввода
+$(document).ready(function () {
+    $('#addButton').click(function (e) {
+        e.preventDefault();
+
         const name = $('#name').val();
         const lastname = $('#Lastname').val();
         const age = $('#age').val();
@@ -54,7 +50,6 @@ $(document).ready(function () {
         const password = $('#password').val();
         const roleId = $('#roles').val();
 
-        // Создаем объект с данными для отправки на сервер
         if (roleId == 1) {
             data = {
                 name: name,
@@ -85,11 +80,7 @@ $(document).ready(function () {
             };
         }
 
-
-        // Преобразуем объект data в строку JSON
         const jsonData = JSON.stringify(data);
-
-        // Отправляем запрос на сервер с помощью AJAX
         $.ajax({
             url: url,
             type: 'POST',
@@ -103,8 +94,6 @@ $(document).ready(function () {
     });
 });
 
-
-// //УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ
 function setDelete(button) {
     var values = button.value.split("-");
     let id = document.getElementById("deleteID").value = values[0];
@@ -114,16 +103,13 @@ function setDelete(button) {
     document.getElementById("deleteEmail").value = values[4];
 
     $(document).ready(function () {
-        // Обработчик нажатия на кнопку "Добавить"
         $('#ButtonDeleteAccept').click(function (e) {
-            e.preventDefault(); // Предотвращаем перезагрузку страницы
-            // Отправляем запрос на сервер с помощью AJAX
+            e.preventDefault();
             $.ajax({
                 url: url + "/" + id,
                 type: 'DELETE',
-                contentType: 'application/json', // Указываем тип данных как JSON
+                contentType: 'application/json',
                 success: function (response) {
-                    // Обработка успешного ответа от сервера
                     window.location.replace("http://localhost:8080/users")
                 },
             });
@@ -131,7 +117,6 @@ function setDelete(button) {
     });
 }
 
-//ИЗМЕНЕНИЕ ПОЛЬЗОВАТЕЛЯ
 function setEdit(button) {
     var value = button.value.split("-");
     let editId1 = editId.value = value[0];
@@ -143,11 +128,9 @@ function setEdit(button) {
 
 
     $(document).ready(function () {
-        // Обработчик нажатия на кнопку "Добавить"
         $('#editButtonAccept').click(function (e) {
-            e.preventDefault(); // Предотвращаем перезагрузку страницы
+            e.preventDefault();
 
-            // Получаем значения из полей ввода
             const id = $('#editId').val();
             const name = $('#editName').val();
             const lastname = $('#editLastname').val();
@@ -187,18 +170,13 @@ function setEdit(button) {
                     ]
                 };
             }
-
-            // Преобразуем объект data в строку JSON
             const jsonData = JSON.stringify(data);
-
-            // Отправляем запрос на сервер с помощью AJAX
             $.ajax({
-                url: url,
+                url: url + "/" + id,
                 type: 'PUT',
                 data: jsonData,
-                contentType: 'application/json', // Указываем тип данных как JSON
+                contentType: 'application/json',
                 success: function (response) {
-                    // Обработка успешного ответа от сервера
                     window.location.replace("http://localhost:8080/users")
                 },
             });
@@ -207,16 +185,14 @@ function setEdit(button) {
 }
 
 
-//ВЫВОД НА ЭКРАН ПРИЦИПАЛ
-
 let userLeftBtn2 = document.getElementById("user-left-btn").value;
 
 
 $.ajax({
-    url:url+"/"+userLeftBtn2,
-    method:'GET',
-    success:function(data){
-       let temp=`
+    url: url + "/" + userLeftBtn2,
+    method: 'GET',
+    success: function (data) {
+        let temp = `
             <tr>
                 <td>${data.id}</td>
                 <td>${data.name}</td>
@@ -225,11 +201,10 @@ $.ajax({
                 <td>${data.email}</td>
                 <td>${data.roles.map(r => r.name === 'ROLE_ADMIN' ? 'ADMIN' : 'USER')}</td>     
             </tr>`
-        document.querySelector("#block2").innerHTML = temp ;
+        document.querySelector("#block2").innerHTML = temp;
     }
 })
 
-//Отоброжение на экран пользователей в зависимости под чьей учеткой зашли
 let princRole = document.getElementById("princRole").innerText.trim();
 let adminPage = document.getElementById("admin-page");
 let userPage = document.getElementById("user-page");
@@ -239,11 +214,10 @@ let adminLeftBtn = document.getElementById("admin-left-btn")
 
 if (princRole == 'ADMIN') {
     adminLeftBtn.classList.add("active");
-    adminPage.classList.add("show","active");
-}
-else {
+    adminPage.classList.add("show", "active");
+} else {
     userLeftBtn.classList.add("active");
-    userPage.classList.add("show","active");
+    userPage.classList.add("show", "active");
 }
 
 
